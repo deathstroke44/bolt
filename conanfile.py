@@ -10,7 +10,7 @@ class Discotec (ConanFile):
     settings = ("os", "build_type", "arch", "compiler")
 
     def requirements(self):
-        self.requires("boost/1.73.0")
+        self.requires("bazel/7.0.0")
 
     def build_requirements(self):
         self.tool_requires("cmake/[>=2.8]")
