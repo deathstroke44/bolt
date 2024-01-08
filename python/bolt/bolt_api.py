@@ -117,7 +117,7 @@ def _encode_X_pq(X, codebooks, elemwise_dist_func=dists_elemwise_sq):
 
     assert X.shape[1] == (ncodebooks * subvect_len)
 
-    idxs = np.empty((X.shape[0], ncodebooks), dtype=np.int)
+    idxs = np.empty((X.shape[0], ncodebooks), dtype=np.int_)
     X = X.reshape((X.shape[0], ncodebooks, subvect_len))
     for i, row in enumerate(X):
         row = row.reshape((1, ncodebooks, subvect_len))
@@ -156,7 +156,7 @@ def _learn_best_quantization(luts):  # luts can be a bunch of vstacked luts
 
         ceil = np.percentile(luts_offset, 100 - alpha_pct)
         scale_by = 255. / ceil
-        luts_quantized = np.floor(luts_offset * scale_by).astype(np.int)
+        luts_quantized = np.floor(luts_offset * scale_by).astype(np.int_)
         luts_quantized = np.minimum(255, luts_quantized)  # clip at 255
 
         # compute err
@@ -298,7 +298,7 @@ class MockEncoder(object):
         self.X = X
         self.X_enc = _encode_X_pq(X, self.centroids)
         ncodebooks = self.centroids.shape[1]
-        enc_offsets = np.arange(ncodebooks, dtype=np.int) * 16
+        enc_offsets = np.arange(ncodebooks, dtype=np.int_) * 16
 
         self._encoder.set_data(X)
         raw_Xenc = self._encoder.codes()

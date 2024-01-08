@@ -28,7 +28,7 @@ class Bucket(object):
         if point_ids is None:
             assert N == 0
             point_ids = (set() if support_add_and_remove
-                         else np.array([], dtype=np.int))
+                         else np.array([], dtype=np.int_))
 
         self.N = len(point_ids)
         self.id = bucket_id
@@ -1013,7 +1013,7 @@ def _sparse_encoded_lstsq_gomp(X_enc, Y, nnz_blocks, K=16):
 
     XtX = np.asfarray(XtX)  # since we'll be slicing columns
 
-    keep_codebook_idxs = np.empty((M, nnz_blocks), dtype=np.int)
+    keep_codebook_idxs = np.empty((M, nnz_blocks), dtype=np.int_)
 
     XtX_G = np.empty((ncodebooks, K * ncodebooks, K), dtype=np.float32)
     for c in range(ncodebooks):
@@ -1177,11 +1177,11 @@ def _sparse_encoded_lstsq_elim_v2(X_enc, Y, nnz_per_centroid, K=16,
     # matrix of centroids
     W_sparse = np.empty((ncodebooks * K, M), dtype=np.float32)
     if uniform_sparsity:
-        ret_idxs = np.empty((ncodebooks, nnz_per_centroid), dtype=np.int)
+        ret_idxs = np.empty((ncodebooks, nnz_per_centroid), dtype=np.int_)
     else:
         ret_idxs = []
     # else:
-        # ret_idxs = np.zeros((ncodebooks, M), dtype=np.int) - 1
+        # ret_idxs = np.zeros((ncodebooks, M), dtype=np.int_) - 1
     for c in range(ncodebooks):
         idxs = np.where(keep_mask[c] != 0)[0]
         if uniform_sparsity:
@@ -1240,7 +1240,7 @@ def _sparse_encoded_lstsq_backward_elim(X_enc, Y, nnz_blocks, K=16):
 
     XtX = np.asfarray(XtX)  # since we'll be slicing columns
 
-    keep_codebook_idxs = np.empty((M, nnz_blocks), dtype=np.int)
+    keep_codebook_idxs = np.empty((M, nnz_blocks), dtype=np.int_)
 
     codebook_scores = np.zeros(ncodebooks)
     for m in range(M):  # fully solve one output col at a time
@@ -1306,7 +1306,7 @@ def sparse_encoded_lstsq(X_enc, Y, K=16, nnz_blocks=-1, **kwargs):
         W = encoded_lstsq(X_enc, Y, K=16)
         ncodebooks = X_enc.shape[1]
         M = Y.shape[1]
-        keep_codebook_idxs = np.empty((ncodebooks, M), dtype=np.int)
+        keep_codebook_idxs = np.empty((ncodebooks, M), dtype=np.int_)
         all_idxs = np.arange(M)
         for c in range(ncodebooks):
             keep_codebook_idxs[c] = all_idxs
@@ -1334,7 +1334,7 @@ def _pq_codebook_start_end_idxs(X, ncodebooks, algo='start'):
     ncodebooks = int(ncodebooks)
     assert D >= ncodebooks
 
-    idxs = np.empty((ncodebooks, 2), dtype=np.int)
+    idxs = np.empty((ncodebooks, 2), dtype=np.int_)
     full_subvec_len = D // ncodebooks
     start_idx = 0
     for c in range(ncodebooks):
@@ -1682,7 +1682,7 @@ def learn_splits_greedy(X, nsplits, verbose=2):
                point_ids=np.arange(N))]
 
     # all_point_infos = [PointInfo(data=row, bucket_id=0) for row in X]
-    bucket_assignments = np.zeros(N, dtype=np.int)
+    bucket_assignments = np.zeros(N, dtype=np.int_)
 
     # Z = X - X.mean(axis=0)
     # total_loss = np.sum(Z * Z)
@@ -1776,7 +1776,7 @@ def learn_splits_greedy(X, nsplits, verbose=2):
                    for buck in buckets]
         buckets = reduce(lambda b1, b2: b1 + b2, buckets)  # flatten pairs
         for i, buck in enumerate(buckets):
-            ids = np.asarray(list(buck.point_ids), dtype=np.int)
+            ids = np.asarray(list(buck.point_ids), dtype=np.int_)
             bucket_assignments[ids] = i
 
         total_loss = sum([bucket.loss for bucket in buckets])
@@ -1897,20 +1897,20 @@ def learn_splits(X, nsplits, return_centroids=True, algo='multisplits',
 
 def assignments_from_splits(X, splits):
     nsplits = len(splits)
-    indicators = np.empty((nsplits, len(X)), dtype=np.int)
+    indicators = np.empty((nsplits, len(X)), dtype=np.int_)
     for i, split in enumerate(splits):
         indicators[i] = X[:, split.dim] > split.val
 
     # compute assignments by treating indicators in a row as a binary num
-    # scales = (2 ** np.arange(nsplits)).astype(np.int)
-    scales = (1 << np.arange(nsplits)).astype(np.int)
-    return (indicators.T * scales).sum(axis=1).astype(np.int)
+    # scales = (2 ** np.arange(nsplits)).astype(np.int_)
+    scales = (1 << np.arange(nsplits)).astype(np.int_)
+    return (indicators.T * scales).sum(axis=1).astype(np.int_)
 
 
 def assignments_from_multisplits(X, splits):
     N, _ = X.shape
     nsplits = len(splits)
-    # indicators = np.zeros((nsplits, len(X)), dtype=np.int)
+    # indicators = np.zeros((nsplits, len(X)), dtype=np.int_)
     assert len(splits) >= 1
     # dim0 = splits[0].dim
     # assert len(splits[0].vals) == 1  # only 1 initial split
@@ -1923,7 +1923,7 @@ def assignments_from_multisplits(X, splits):
 
     # determine group ids for each point; this is the one that's annoying
     # because the number of bits changes after split
-    group_ids = np.zeros(N, dtype=np.int)
+    group_ids = np.zeros(N, dtype=np.int_)
     for i in range(min(nsplits, nsplits_affecting_group_id)):
         split = splits[i]
         vals = split.vals[group_ids]
@@ -2071,7 +2071,7 @@ def _plot_stuff_on_trace():
     limit_n = 500
     # X = np.loadtxt('assets/debug/Trace/Trace_TRAIN.txt')[:limit_n]
     X = _load_trace()[:limit_n]
-    y = (X[:, 0] - 1).astype(np.int)
+    y = (X[:, 0] - 1).astype(np.int_)
     X = X[:, 1:]
 
     _, axes = plt.subplots(3, 4, figsize=(13, 9), sharey=True)

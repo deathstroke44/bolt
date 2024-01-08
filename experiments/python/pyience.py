@@ -617,13 +617,13 @@ def _uniq_element_positions(iterable):
 
 # def _group_start_idxs_eq_split(nelements, ngroups):
 #   group_sz = nelements // ngroups
-#   return np.arange(0, nelements, group_sz, dtype=np.int)
+#   return np.arange(0, nelements, group_sz, dtype=np.int_)
 
 def _group_start_end_idxs(nelements, ngroups=-1, fractions=None):
     hasFracs = fractions is not None and len(fractions)
 
     if ngroups <= 1 and not hasFracs:
-        return np.array([0], dtype=np.int), np.array([nelements], dtype=np.int)
+        return np.array([0], dtype=np.int_), np.array([nelements], dtype=np.int_)
 
     if not hasFracs:
         fracs = np.ones(ngroups)
@@ -632,7 +632,7 @@ def _group_start_end_idxs(nelements, ngroups=-1, fractions=None):
     fractions /= np.max(fracs)
 
     cum_fracs = np.cumsum(fractions)
-    end_idxs = (nelements * cum_fracs).astype(np.int)
+    end_idxs = (nelements * cum_fracs).astype(np.int_)
     start_idxs = np.r_[0, end_idxs[:-1]]
 
     return start_idxs, end_idxs

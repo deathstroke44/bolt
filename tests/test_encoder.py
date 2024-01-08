@@ -212,7 +212,7 @@ def test_basic():
 
     l2_corrs = np.empty(len(Q))
     for i, q in enumerate(Q):
-        l2_true = _dists_sq(X, q).astype(np.int)
+        l2_true = _dists_sq(X, q).astype(np.int_)
         l2_bolt = enc.transform(q)
         l2_corrs[i] = _corr(l2_true, l2_bolt)
         if i == nqueries - 1:
